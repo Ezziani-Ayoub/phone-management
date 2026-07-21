@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: phone-management-api
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate
+    startCommand: npx ts-node src/index.ts
+    envVars:
+      - key: TURSO_DATABASE_URL
+        value: libsql://phone-management-ezziani-ayoub.aws-eu-west-1.turso.io
+      - key: TURSO_AUTH_TOKEN
+        value: eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODQ2MjQyNzAsImlkIjoiMDE5ZjgzZTEtYTkwMS03M2FiLTk0NzEtYjc4Y2E1MjUwNTQxIiwia2lkIjoiQ2JoREZaWWJ2bEhrR21fWWJWWUVlVlM3alIzak1yRlJPc0w0dzNKYjB5dyIsInJpZCI6IjhiZmViM2U4LWQ1MzctNDI2ZC1hMWQ4LTQxMWU3Nzc5ODFkZCJ9.azaWmp-ZvwBDhk1KGp9ragzvMUskvfLVO66uNtUwd3An5tblNo8sI8ciGvWczew44NqcfMrL4aO5s4wmba51DQ
+      - key: NODE_ENV
+        value: production
