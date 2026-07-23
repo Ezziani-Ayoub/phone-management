@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
-import prisma from '../db';
+import { PrismaClient } from '@prisma/client';
 
 const router = Router();
+const prisma = new PrismaClient();
 
 // GET /api/employees
 router.get('/', async (req: Request, res: Response) => {

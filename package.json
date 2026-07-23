@@ -1,13 +1,82 @@
 {
   "name": "phone-management",
+  "version": "1.0.0",
   "private": true,
+  "description": "Gestion des numéros SOS Villages d'Enfants Maroc",
+  "author": "SOS Villages d'Enfants Maroc",
+  "main": "electron/main.js",
   "scripts": {
     "dev:frontend": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run dev",
     "dev": "npx concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "setup": "npm install && npm --prefix frontend install && npm --prefix backend install"
+    "setup": "npm install && npm --prefix frontend install && npm --prefix backend install",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "electron:dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "electron:build": "npm run build:frontend && npm run build:backend && npx electron-builder build --win portable",
+    "electron:package": "npm run build:frontend && npm run build:backend && electron-packager . Gestion-Numeros-SOS-Villages --platform=win32 --arch=x64 --out=dist-electron --overwrite --ignore=dist-electron --ignore=.git --ignore=frontend/src --ignore=backend/src"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "ma.sos-villages.phone-management",
+    "productName": "Gestion Numeros SOS Villages",
+    "copyright": "SOS Villages d Enfants Maroc",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "frontend/dist",
+        "to": "frontend/dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "backend/dist",
+        "to": "backend/dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "backend/node_modules",
+        "to": "backend/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "backend/prisma",
+        "to": "backend/prisma",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/.prisma/**",
+      "**/node_modules/@prisma/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   }
 }

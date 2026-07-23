@@ -13,8 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
+const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : '*';
 app.use(cors({
-  origin: '*',
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -28,10 +29,19 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/forfaits', forfaitRoutes);
 
+// Serve frontend static files in production
+import path from 'path';
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDistPath));
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'SOS Villages d\'Enfants - API en ligne' });
+});
+
+// Single Page Application fallback for React router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 
 // Global error handler
@@ -40,12 +50,9 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).json({ error: 'Erreur interne du serveur', details: err.message });
 });
 
-// Only start the HTTP server in local dev (not in Vercel serverless)
-if (process.env.VERCEL !== '1') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
-    console.log(`📱 SOS Villages d'Enfants - Système de gestion des numéros`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`📱 SOS Villages d'Enfants - Système de gestion des numéros`);
+});
 
 export default app;
